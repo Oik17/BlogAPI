@@ -10,10 +10,10 @@ const { fileURLToPath }=require("url");
 
 //const router = express.Router();
 const storage = multer.memoryStorage()
-const {uploadImage} = multer({ storage: storage })
+const uploadImage = multer({ storage: storage })
 //const xyz = dirname(fileURLToPath(import.meta.url));
 
-const uploadController=require('../controllers/upload')
+const {uploadController}=require('../controllers/upload')
 //import uploadController from '../controllers/upload'
 // Define routes on the router...
 router.get('/', (req, res) => {
@@ -22,6 +22,9 @@ router.get('/', (req, res) => {
 
 //router.post('/uploadFile',uploadImage.single("image"),uploadController)
 
-router.post('/uploadFile',uploadController)
+router.post('/uploadFile', uploadImage.single("image"), async (req, res) => {
+    // You can add logic here to handle the uploaded file and send a response
 
+    uploadController(req,res);
+  });
 module.exports=router;    
