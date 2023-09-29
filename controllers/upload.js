@@ -38,13 +38,39 @@ async function uploadController(req, res) {
 
         const command = new PutObjectCommand(params);
         await s3.send(command);
-    
-        return res.status(201).send(req.file.originalname );
+        const imageUrl = `https://s3-${bucketRegion}.amazonaws.com/${params.Bucket}/${params.Key}`;
+        
+        const up= await uploads.create({
+            text: req.body.text,
+            imageUrl: imageUrl
+       })
+       await up.save();
+
+        return res.status(201).send(imageUrl);
     } catch (error) {
         console.error(error);
         return res.status(500).send('Internal server error.');
     }
+}
+
+async function getController(req,res){
+  try{
+    const dataAll = await uploads.find()    
+    if(dataAll.length==0){
+        return res.status(404).json({
+        message: "No data found",
+      })
+    }
+    else {
+      return res.status(201).json(dataAll);
+    }
   }
+  catch(err){
+    console.error(err);
+    return res.status(500).send(err);
+  }
+}
 module.exports={
-   uploadController
+   uploadController,
+   getController
 };
