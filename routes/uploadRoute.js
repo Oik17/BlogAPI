@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const multer=require('multer');
-const { dirname }=require("path");
-const { fileURLToPath }=require("url");
 // import express from 'express'
 // import multer from 'multer'
 // import { dirname } from "path";
@@ -29,6 +27,5 @@ router.post('/uploadFile', uploadImage.single("image"), async (req, res) => {
 router.get('/getData', (req,res)=>{
   getController(req,res)
 })
-
 
 module.exports=router;    

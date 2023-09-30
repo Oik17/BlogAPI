@@ -20,6 +20,11 @@ const userSchema=new mongoose.Schema({
     refreshToken: {
         type: String
     },
+    tokenVersion:{
+        type: Number,
+        default: 0
+    },
+
 })
 
 module.exports=mongoose.model("user",userSchema)
