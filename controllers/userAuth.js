@@ -1,5 +1,7 @@
 const bcrypt=require('bcrypt');
 const user=require("../models/userSchema");
+const jwt=require('jsonwebtoken');
+
 
 async function signup(req,res){
     try{
@@ -30,14 +32,19 @@ async function signup(req,res){
 async function login(req,res){
     try{
         const user_exists = await user.findOne({"email":req.body.email});
-
+        
         if(user_exists==null){
-            console.log("why am i here")
             return res.status(400).json({message: "user does not exist"})
         }
-
         if(await bcrypt.compare(req.body.password,user_exists.password)){
-            res.status(201).send("Logging in");
+            console.log("hello")
+            const username=req.body.email;
+            const user={email: username};
+            const accessToken=jwt.sign(user,process.env.ACCESS_KEY_SECRET,{expiresIn: '15m'});
+            const refreshToken=jwt.sign(user,process.env.REFRESH_KEY_SECRET)
+            user_exists.refreshToken=refreshToken
+            await user_exists.save();
+            res.status(201).json({accessToken: accessToken, refreshToken: refreshToken});
         }
         else{
             res.status(500).send("Incorrect password");
@@ -48,7 +55,54 @@ async function login(req,res){
     }
 }
 
+async function refresh (req, res){
+    const refreshToken = req.body.refreshToken;
+    if (!refreshToken) {
+        return res.status(400).json({ message: 'refreshToken is required' });
+    }
+    try {
+        const User = await user.findOne({ refreshToken });
+        if (!User) {
+            return res.status(404).json({ message: 'Invalid refreshToken' });
+        }
+
+        const storedRefreshToken = User.refreshToken;
+        console.log(storedRefreshToken)
+        if (!storedRefreshToken) {
+            return res.status(400).json({ message: 'Invalid refreshToken' });
+        }
+        const USER=user.email;
+        const username={email: USER};
+        const newAccessToken = jwt.sign(username,process.env.ACCESS_KEY_SECRET,{expiresIn: '15s'})
+        res.header('Authorization', `Bearer ${newAccessToken}`);
+        console.log("Hello")
+        res.status(201).json({ accessToken: newAccessToken });
+    } catch (error) {
+        res.status(500).send(error);
+    }
+}
+
+async function logout (req, res){
+    try {
+        const decoded = req.user;
+        console.log(req.user)
+        const username = await user.findOne({ email: decoded.email });
+        if (!username) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        console.log("hello")
+        console.log(username)
+        username.refreshToken = null;
+        await username.save();
+        res.status(200).json({ message: 'Logout successful' });
+    } catch (err) {
+        res.status(500).json({ error: err });
+    }
+}
+
 module.exports={
     signup,
-    login
+    login,
+    refresh,
+    logout
 }
