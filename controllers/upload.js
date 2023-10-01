@@ -1,9 +1,9 @@
 const uploads=require('../models/blogSchema')
+const user=require('../models/userSchema')
 const multer=require('multer');
 const { S3Client , PutObjectCommand } = require("@aws-sdk/client-s3");
 const dotenv=require('dotenv');
 const crypto=require('crypto');
-//import multer from 'multer'
 
 dotenv.config()
 
@@ -42,11 +42,17 @@ async function uploadController(req, res) {
         
         const up= await uploads.create({
             text: req.body.text,
-            imageUrl: imageUrl
+            imageUrl: imageUrl,
+            user: req.body.user
        })
        await up.save();
-
-        return res.status(201).send(imageUrl);
+       console.log(up)
+       const User=await user.findById(req.body.user)
+       if (!User.blogs.includes(up)){
+          User.blogs.push(up)
+       }
+       await User.save();
+       return res.status(201).send(imageUrl);
     } catch (error) {
         console.error(error);
         return res.status(500).send('Internal server error.');
@@ -55,7 +61,7 @@ async function uploadController(req, res) {
 
 async function getController(req,res){
   try{
-    const dataAll = await uploads.find()    
+    const dataAll = await uploads.find().populate("user")   
     if(dataAll.length==0){
         return res.status(404).json({
         message: "No data found",

@@ -15,7 +15,7 @@ router.post('/test',authenticateToken, (req, res) => {
 });
 
 
-router.post('/uploadFile', uploadImage.single("image"), async (req, res) => {
+router.post('/uploadFile', uploadImage.single("image"),authenticateToken, async (req, res) => {
     uploadController(req,res);
   });
 

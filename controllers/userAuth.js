@@ -100,9 +100,28 @@ async function logout (req, res){
     }
 }
 
+async function getAllUser(req,res){
+    try{
+      const dataAll = await user.find().populate("blogs")   
+      if(dataAll.length==0){
+          return res.status(404).json({
+          message: "No data found",
+        })
+      }
+      else {
+        return res.status(201).json(dataAll);
+      }
+    }
+    catch(err){
+      console.error(err);
+      return res.status(500).send(err);
+    }
+}
+
 module.exports={
     signup,
     login,
     refresh,
-    logout
+    logout,
+    getAllUser
 }
