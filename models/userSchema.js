@@ -13,17 +13,10 @@ const userSchema=new mongoose.Schema({
         type: String,
         required: true
     },
-    isActive: {
-        type: Boolean,
-        default: true
-    },
     refreshToken: {
         type: String
     },
-    tokenVersion:{
-        type: Number,
-        default: 0
-    },
+    blogs: [{ type: mongoose.Schema.Types.ObjectId, ref: "upload" }],
 
 })
 
