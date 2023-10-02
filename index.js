@@ -4,11 +4,6 @@ const uploadRoute=require('./routes/uploadRoute');
 const userRoute=require('./routes/userRoute')
 const cors=require('cors');
 const mongoose=require('mongoose');
-// import express from 'express'
-// import dotenv from 'dotenv'
-// import cors from 'cors'
-// import uploadRoute from './routes/uploadRoute'
-
 dotenv.config()
 
 mongoose.connect(process.env.DBURI);

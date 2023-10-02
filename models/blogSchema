@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const uploadSchema = new mongoose.Schema({
   text: { type: String, required: true},
   imageUrl: {type: String},
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "user" ,required: true},
   
 });
 

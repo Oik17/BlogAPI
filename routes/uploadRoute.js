@@ -4,10 +4,8 @@ const multer=require('multer');
 
 const storage = multer.memoryStorage()
 const uploadImage = multer({ storage: storage })
-//const xyz = dirname(fileURLToPath(import.meta.url));
 
 const {uploadController,getController}=require('../controllers/upload')
-
 const {authenticateToken}= require('../middleware/authenticate')
 
 router.post('/test',authenticateToken, (req, res) => {

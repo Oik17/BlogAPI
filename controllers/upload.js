@@ -40,14 +40,16 @@ async function uploadController(req, res) {
         await s3.send(command);
         const imageUrl = `https://s3-${bucketRegion}.amazonaws.com/${params.Bucket}/${params.Key}`;
         
+        const user_email = await user.findOne({"email":req.user.email});
+        console.log(user_email)
         const up= await uploads.create({
             text: req.body.text,
             imageUrl: imageUrl,
-            user: req.body.user
+            user: user_email._id
        })
        await up.save();
        console.log(up)
-       const User=await user.findById(req.body.user)
+       const User=await user.findById(user_email._id)
        if (!User.blogs.includes(up)){
           User.blogs.push(up)
        }
