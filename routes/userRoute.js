@@ -8,8 +8,6 @@ router.get('/test', (req, res) => {
   res.send("hello");
 });
 
-//router.post('/uploadFile',uploadImage.single("image"),uploadController)
-
 router.post('/signup', async (req, res) => {
     signup(req,res);
   });
