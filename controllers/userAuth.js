@@ -40,8 +40,8 @@ async function login(req,res){
             console.log("hello")
             const username=req.body.email;
             const user={email: username};
-            const accessToken=jwt.sign(user,process.env.ACCESS_KEY_SECRET,{expiresIn: '15m'});
-            const refreshToken=jwt.sign(user,process.env.REFRESH_KEY_SECRET)
+            const accessToken=jwt.sign(user,process.env.ACCESS_KEY_SECRET,{expiresIn: '15s'});
+            const refreshToken=jwt.sign(user,process.env.REFRESH_KEY_SECRET,{expiresIn: '15m'})
             user_exists.refreshToken=refreshToken
             await user_exists.save();
             res.status(201).json({accessToken: accessToken, refreshToken: refreshToken});
